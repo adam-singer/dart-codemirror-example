@@ -7,7 +7,7 @@ class CodeMirrorImpl {
   Element root; 
   Element console;
   TextAreaElement textarea;
-  TextAreaElement textareaCaret;
+  
   Element section;
   ButtonElement button;
   DivElement view; 
@@ -20,7 +20,7 @@ class CodeMirrorImpl {
     document.style;
     
     String textareaStr = "<textarea id='editorBuffer' class='textarea' spellcheck='false' wrap='off' goog_input_chext='chext' style='color: transparent; background-color: transparent;'></textarea>";
-    String textareaCaretStr = "<textarea id='caret' class='textarea' spellcheck='false' wrap='off' goog_input_chext='chext' style='color: transparent; background-color: transparent; z-index:-3;'></textarea>";
+    
     String sectionStr= """
     <section>
     <div class="container codemirrorsize" style="position: relative;" >
@@ -35,7 +35,7 @@ class CodeMirrorImpl {
     </div>
     </section>
 """;
-    String buttonStr = """<button id="submitButton" value="Submit">Submit</button>""";
+    String buttonStr = """<button id="submitButton" style="visibility: hidden;" value="Submit">Submit</button>""";
     String viewStr = """<div id="view" class="view"><div>""";
     
     console = new Element.html("<div><p id='results'></p></div>");
@@ -43,8 +43,7 @@ class CodeMirrorImpl {
     section = new Element.html(sectionStr);
     button = new Element.html(buttonStr);
     view = new Element.html(viewStr);
-    textareaCaret = new Element.html(textareaCaretStr);
-    //textareaCaret.setSelectionRange(start, end)
+    
     root = new Element.tag("div");
     root.style.height = rootHeight;
     root.style.width = rootWidth;
@@ -53,7 +52,33 @@ class CodeMirrorImpl {
 
     textarea.on.scroll.add(textAreaScrollHandler);
     textarea.on.keyUp.add(keyboardHandler);
+    
+    /*
+    textarea.on.input.add((var e) {
+      // TODO: create caret on input events by selected end.
+      print("on.input=>textarea.selectionEnd="+textarea.selectionEnd);
+    });
+    textarea.on.mouseDown.add((var e) {
+      print("on.mouseDown=>textarea.selectionEnd="+textarea.selectionEnd);
+    });
+    */
+    
+    
     bufferContainer = section.query('#editorBufferContainer');
+    textarea.on.input.add((_) {
+      
+    });
+    textarea.on.click.add((MouseEvent event) {
+      /*
+      int t=event.offsetY;
+      int l=event.offsetX;
+      print("t=${t}");
+      print("l=${l}");
+      var caret = new Element.html("<div style='top:${t};left:${l};position: absolute;overflow:scroll;overflow-x: scroll;overflow-y: scroll;  font-family:${_font};font-size:${_fontSize};line-height:${_lineHeight};'>" 
+      + "|" +"</div>");
+      bufferContainer.nodes.add(caret);
+      */
+    });
     
     root.nodes.add(view);
     view.nodes.add(button);
@@ -96,7 +121,7 @@ class CodeMirrorImpl {
     });
     
     var codeLine = new Element.html("<div style='top:0;position: absolute;height:${scrollHeight};width:${scrollWidth};overflow:scroll;overflow-x: scroll;overflow-y: scroll;  font-family:${_font};font-size:${_fontSize};line-height:${_lineHeight};'>" 
-    + sb.toString() + "<pre class='cursor'>|</pre>" +"</div>");
+    + sb.toString() +"</div>");
     section.query('#editorBufferContainer').nodes.forEach((var n){
       n.remove();
     });
